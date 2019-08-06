@@ -1,8 +1,6 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Mvc;
+using NLog;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 
 namespace CustomerManagement.Api.Web.Controllers
 {
@@ -10,10 +8,13 @@ namespace CustomerManagement.Api.Web.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
+        private static Logger Logger = LogManager.GetCurrentClassLogger();
+
         // GET api/values
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
+            Logger.Debug("Get");
             return new string[] { "value1", "value2" };
         }
 
