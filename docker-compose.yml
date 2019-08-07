@@ -1,0 +1,8 @@
+version: '3.4'
+
+services:
+  customermanagement.api.web:
+    image: ${DOCKER_REGISTRY-}customermanagementapiweb
+    build:
+      context: .
+      dockerfile: CustomerManagement.Api.Web/Dockerfile

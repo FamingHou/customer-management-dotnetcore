@@ -49,7 +49,7 @@ Create `nlog.config` and `nlog.Development.config` in `config` directory
 </nlog>
 ```
 
-#### Link 
+### Link 
 
 ```
   <ItemGroup>
@@ -62,7 +62,7 @@ Create `nlog.config` and `nlog.Development.config` in `config` directory
   </ItemGroup>
 ```
 
-#### Initialization
+### Initialization
 
 ```
 public static Logger Configure()
@@ -93,4 +93,22 @@ namespace CustomerManagement.Api.Web.Controllers
             Logger.Debug("This is a log message");
             ...
         }
+```
+
+## Docker Compose
+
+In the `CustomerManagement.Api.Web` project, right-click on the project node, and choose **Add** > **Container Orchestrator Support**. Choose **Docker Compose**, and then select **Linux**.
+
+Visual Studio creates the docker compose YML file.
+
+```yaml
+version: '3.4'
+
+services:
+  customermanagement.api.web:
+    image: ${DOCKER_REGISTRY-}customermanagementapiweb
+    build:
+      context: .
+      dockerfile: CustomerManagement.Api.Web/Dockerfile
+
 ```
