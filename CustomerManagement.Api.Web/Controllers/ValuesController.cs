@@ -8,7 +8,7 @@ namespace CustomerManagement.Api.Web.Controllers
     [ApiController]
     public class ValuesController : ControllerBase
     {
-        private static Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
 
         // GET api/values
         [HttpGet]
