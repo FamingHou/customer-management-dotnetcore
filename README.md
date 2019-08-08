@@ -8,7 +8,8 @@
 
 Create `nlog.config` and `nlog.Development.config` in `config` directory
 
-```
+`./config/nlog.config`
+```xml
 <?xml version="1.0" encoding="utf-8"?>
 
 <nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
@@ -51,7 +52,8 @@ Create `nlog.config` and `nlog.Development.config` in `config` directory
 
 ### Link 
 
-```
+`./CustomerManagement.Api.Web/CustomerManagement.Api.Web.csproj`
+```xml
   <ItemGroup>
     <None Include="..\config\nlog.config" Link="nlog.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -64,7 +66,8 @@ Create `nlog.config` and `nlog.Development.config` in `config` directory
 
 ### Initialization
 
-```
+`./CustomerManagement.Base/Configuration/LogConfiguration.cs`
+```csharp
 public static Logger Configure()
 {
     var basePath = AppDomain.CurrentDomain.RelativeSearchPath ?? AppDomain.CurrentDomain.BaseDirectory;
@@ -79,7 +82,9 @@ public static Logger Configure()
 
 ### Logging
 
-```
+`./CustomerManagement.Api.Web/Controllers/ValuesController.cs`
+
+```csharp
 namespace CustomerManagement.Api.Web.Controllers
 {
     ...
