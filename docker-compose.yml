@@ -1,0 +1,18 @@
+version: '3.4'
+
+services:
+  customermanagement.api.web:
+    image: ${DOCKER_REGISTRY-}customermanagementapiweb
+    build:
+      context: .
+      dockerfile: CustomerManagement.Api.Web/Dockerfile
+    depends_on:
+      - sqlserver
+
+  sqlserver:
+    image: microsoft/mssql-server-linux:2017-latest
+    ports:
+      - "5434:1433"
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y

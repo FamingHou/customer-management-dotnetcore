@@ -49,7 +49,7 @@ Create `nlog.config` and `nlog.Development.config` in `config` directory
 </nlog>
 ```
 
-#### Link 
+### Link 
 
 ```
   <ItemGroup>
@@ -62,7 +62,7 @@ Create `nlog.config` and `nlog.Development.config` in `config` directory
   </ItemGroup>
 ```
 
-#### Initialization
+### Initialization
 
 ```
 public static Logger Configure()
@@ -94,3 +94,54 @@ namespace CustomerManagement.Api.Web.Controllers
             ...
         }
 ```
+
+## Docker Compose
+
+In the `CustomerManagement.Api.Web` project, right-click on the project node, and choose **Add** > **Container Orchestrator Support**. Choose **Docker Compose**, and then select **Linux**.
+
+Visual Studio creates the docker compose YML file.
+
+```yaml
+version: '3.4'
+
+services:
+  customermanagement.api.web:
+    image: ${DOCKER_REGISTRY-}customermanagementapiweb
+    build:
+      context: .
+      dockerfile: CustomerManagement.Api.Web/Dockerfile
+
+```
+
+## Database
+
+### SQL Server
+
+Add `sqlserver` service in `docker-compose.yml`
+
+```yml
+  sqlserver:
+    image: microsoft/mssql-server-linux:2017-latest
+    ports:
+      - "5434:1433"
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+```
+
+Run the SQL Server container
+
+```
+docker-compose up sqlserver
+```
+
+[Connect from outside the container](https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-2017&pivots=cs1-powershell#connectexternal)
+
+```
+sqlcmd -S <ip_address>,5434 -U SA -P "Pass@word"
+```
+
+### References
+
+[Quickstart: Run SQL Server container images with Docker](https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-2017&pivots=cs1-powershell)  
+[Configure SQL Server container images on Docker](https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-docker?view=sql-server-2017)
