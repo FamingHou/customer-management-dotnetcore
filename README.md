@@ -112,3 +112,36 @@ services:
       dockerfile: CustomerManagement.Api.Web/Dockerfile
 
 ```
+
+## Database
+
+### SQL Server
+
+Add `sqlserver` service in `docker-compose.yml`
+
+```yml
+  sqlserver:
+    image: microsoft/mssql-server-linux:2017-latest
+    ports:
+      - "5434:1433"
+    environment:
+      - SA_PASSWORD=Pass@word
+      - ACCEPT_EULA=Y
+```
+
+Run the SQL Server container
+
+```
+docker-compose up sqlserver
+```
+
+[Connect from outside the container](https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-2017&pivots=cs1-powershell#connectexternal)
+
+```
+sqlcmd -S <ip_address>,5434 -U SA -P "Pass@word"
+```
+
+### References
+
+[Quickstart: Run SQL Server container images with Docker](https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-2017&pivots=cs1-powershell)  
+[Configure SQL Server container images on Docker](https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-docker?view=sql-server-2017)
