@@ -1,4 +1,4 @@
-﻿using CustomerManagement.Base.Configuration;
+﻿using CustomerManagement.Base.Config;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using NLog;
@@ -14,8 +14,7 @@ namespace CustomerManagement.Api.Web
             try
             {
                 logger.Debug("Init main");
-                CreateWebHostBuilder(args)
-                    .Build().Run();
+                CreateWebHostBuilder(args).Build().Run();
             }
             catch (Exception ex)
             {
@@ -30,7 +29,6 @@ namespace CustomerManagement.Api.Web
         }
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
-            WebHost.CreateDefaultBuilder(args)
-                .UseStartup<Startup>();
+            WebHost.CreateDefaultBuilder(args).UseStartup<Startup>();
     }
 }
