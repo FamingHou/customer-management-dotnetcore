@@ -18,16 +18,26 @@ namespace CustomerManagement.Storage.SqlServerAdapter.Services
             _context = context;
         }
 
-        public async Task<int> CreateCustomer(Customer customer)
+        public async Task<Customer> CreateCustomer(Customer customer)
         {
+            // @todo Mapper
             var customerEntity = new CustomerEntity
             {
                 Id = Guid.NewGuid(),
                 FirstName = customer.FirstName,
                 LastName = customer.LastName,
             };
-            _context.Customers.Add(customerEntity);
-            return await _context.SaveChangesAsync();
+            var savedEntity = await _context.Customers.AddAsync(customerEntity);
+            await _context.SaveChangesAsync();
+
+            // @todo Mapper
+            var returnedCustomer = new Customer
+            {
+                Id = savedEntity.Entity.Id,
+                FirstName = savedEntity.Entity.FirstName,
+                LastName = savedEntity.Entity.LastName,
+            };
+            return returnedCustomer;
         }
     }
 }

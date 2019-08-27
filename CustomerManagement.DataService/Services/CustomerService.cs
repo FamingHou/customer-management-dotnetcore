@@ -14,7 +14,7 @@ namespace CustomerManagement.DataService.Services
             _customerDbStorage = customerDbStorage;
         }
 
-        public Task<int> CreateCustomer(Customer customer)
+        public Task<Customer> CreateCustomer(Customer customer)
         {
             return _customerDbStorage.CreateCustomer(customer);
         }

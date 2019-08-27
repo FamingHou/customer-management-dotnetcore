@@ -5,6 +5,6 @@ namespace CustomerManagement.Base.Services
 {
     public interface ICustomerDbStorage
     {
-        Task<int> CreateCustomer(Customer customer);
+        Task<Customer> CreateCustomer(Customer customer);
     }
 }

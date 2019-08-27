@@ -142,7 +142,29 @@ sqlcmd -S <ip_address>,5434 -U SA -P "Pass@word"
 
 ### Install EF Core
 
+### Create a migration
 
+Execute the command as below under directory *CustomerManagement.Storage.SqlServerAdapter*
+```console
+dotnet ef migrations add InitialCreate
+```
+
+```console
+PS C:\Users\frank\Documents\Github\customer-management-dotnetcore\CustomerManagement.Storage.SqlServerAdapter> dotnet ef migrations add InitialCreate
+Done. To undo this action, use 'ef migrations remove'
+```
+
+### Update the database
+
+```console
+dotnet ef database update
+```
+
+```console
+PS C:\Users\frank\Documents\Github\customer-management-dotnetcore\CustomerManagement.Storage.SqlServerAdapter> dotnet ef database update
+Applying migration '20190827220606_InitialCreate'.
+Done.
+```
 
 ## References
 
@@ -150,3 +172,4 @@ sqlcmd -S <ip_address>,5434 -U SA -P "Pass@word"
 [Configure SQL Server container images on Docker](https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-docker?view=sql-server-2017)  
 [Quickstart: Compose and ASP.NET Core with SQL Server](https://docs.docker.com/compose/aspnet-mssql-compose/)  
 [Getting Started with EF Core on ASP.NET Core with a New database](https://docs.microsoft.com/en-us/ef/core/get-started/aspnetcore/new-db?tabs=visual-studio)  
+[Migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/)

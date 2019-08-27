@@ -5,6 +5,6 @@ namespace CustomerManagement.DataService.Services
 {
     public interface ICustomerService
     {
-        Task<int> CreateCustomer(Customer customer);
+        Task<Customer> CreateCustomer(Customer customer);
     }
 }

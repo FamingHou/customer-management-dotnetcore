@@ -12,7 +12,6 @@ namespace CustomerManagement.Api.Web.Controllers
     public class CustomersController : ControllerBase
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         private readonly ICustomerService _customerService;
 
         public CustomersController(ICustomerService customerService)
@@ -26,21 +25,21 @@ namespace CustomerManagement.Api.Web.Controllers
         {
             Logger.Debug("CreateCustomer");
             var result = await _customerService.CreateCustomer(customer);
-            return CreatedAtAction(nameof(GetById), result);
+            return CreatedAtAction(nameof(GetById), new {id = "2"}, result);
         }
 
         // GET api/customers
         [HttpGet]
         public ActionResult<IEnumerable<string>> Get()
         {
-            return new[] { "value1", "value2" };
+            return new[] {"value1", "value2"};
         }
 
         // GET api/customers/5
-        [HttpGet("{id}")]
-        public ActionResult<string> GetById(int id)
+        [HttpGet("{id}", Name = "GetById")]
+        public ActionResult<string> GetById(string id)
         {
-            return "value";
+            return $"value {id}";
         }
 
         // PUT api/customers/5
