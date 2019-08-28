@@ -18,5 +18,10 @@ namespace CustomerManagement.DataService.Services
         {
             return _customerDbStorage.CreateCustomer(customer);
         }
+
+        public Task<Customer> GetById(Guid id)
+        {
+            return _customerDbStorage.GetById(id);
+        }
     }
 }

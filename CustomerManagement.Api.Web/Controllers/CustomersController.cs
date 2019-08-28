@@ -1,7 +1,7 @@
-﻿using CustomerManagement.Base.Models;
+﻿using System;
+using CustomerManagement.Base.Models;
 using Microsoft.AspNetCore.Mvc;
 using NLog;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using CustomerManagement.DataService.Services;
 
@@ -19,36 +19,27 @@ namespace CustomerManagement.Api.Web.Controllers
             _customerService = customerService;
         }
 
-        // POST api/customers
         [HttpPost]
         public async Task<ActionResult> CreateCustomer([FromBody] Customer customer)
         {
             Logger.Debug("CreateCustomer");
-            var result = await _customerService.CreateCustomer(customer);
-            return CreatedAtAction(nameof(GetById), new {id = "2"}, result);
+            var savedCustomer = await _customerService.CreateCustomer(customer);
+            return CreatedAtAction(nameof(GetByIdAsync), new {id = savedCustomer.Id}, savedCustomer);
         }
 
-        // GET api/customers
-        [HttpGet]
-        public ActionResult<IEnumerable<string>> Get()
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Customer>> GetByIdAsync(string id)
         {
-            return new[] {"value1", "value2"};
+            var customer = await _customerService.GetById(Guid.Parse(id));
+            if (customer == null) return NotFound();
+            return Ok(customer);
         }
 
-        // GET api/customers/5
-        [HttpGet("{id}", Name = "GetById")]
-        public ActionResult<string> GetById(string id)
-        {
-            return $"value {id}";
-        }
-
-        // PUT api/customers/5
         [HttpPut("{id}")]
         public void Put(int id, [FromBody] string value)
         {
         }
 
-        // DELETE api/customers/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
