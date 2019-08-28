@@ -1,5 +1,9 @@
 # customer-management-dotnetcore
 
+## Overview
+
+![Tour features](docs/overview.gif)
+
 ## NLog
 
 ### Configuration
