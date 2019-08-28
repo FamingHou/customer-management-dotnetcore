@@ -146,6 +146,174 @@ sqlcmd -S <ip_address>,5434 -U SA -P "Pass@word"
 
 ### Install EF Core
 
+#### Package Reference
+
+CustomerManagement.Storage.SqlServerAdapter/CustomerManagement.Storage.SqlServerAdapter.csproj
+
+```xml
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="2.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.11" />
+  </ItemGroup>
+```
+
+
+### Define entity classes
+
+CustomerManagement.Storage.SqlServerAdapter/Entity/CustomerEntity.cs
+```csharp
+namespace CustomerManagement.Storage.SqlServerAdapter.Entity
+{
+    [Table("Customers")]
+    public class CustomerEntity
+    {
+        [Key]
+        public Guid Id { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public virtual List<CommentEntity> Comments { get; set; }
+    }
+}
+```
+
+CustomerManagement.Storage.SqlServerAdapter/Entity/CommentEntity.cs
+```csharp
+namespace CustomerManagement.Storage.SqlServerAdapter.Entity
+{
+    [Table("Comments")]
+    public class CommentEntity
+    {
+        [Key]
+        public Guid Id { get; set; }
+        public string Content { get; set; }
+        public virtual CustomerEntity Customer { get; set; }
+    }
+}
+```
+
+### Define a context class
+
+CustomerManagement.Storage.SqlServerAdapter/Context/CustomerDbContext.cs
+```csharp
+namespace CustomerManagement.Storage.SqlServerAdapter.Context
+{
+    public class CustomerDbContext : DbContext
+    {
+        public CustomerDbContext(DbContextOptions options) : base(options)
+        {
+        }
+        public DbSet<CustomerEntity> Customers { get; set; }
+        public DbSet<CommentEntity> Comments { get; set; }
+        ...
+    }
+}
+```
+
+### Register CustomerDbContext with dependency injection
+
+CustomerManagement.DataService/Startup/StorageConfiguration.cs
+```csharp
+        private static void RegisterSqlServerDbContext(IServiceCollection services, string dbConnectionString)
+        {
+            services.AddDbContext<CustomerDbContext>(options => options.UseSqlServer(dbConnectionString));
+        }
+```
+
+### Define the interface ICustomerService in Data Service layer (Database, Elastic Search etc...)
+
+CustomerManagement.DataService/Services/ICustomerService.cs
+
+```csharp
+namespace CustomerManagement.DataService.Services
+{
+    public interface ICustomerService
+    {
+        Task<Customer> CreateCustomer(Customer customer);
+        Task<Customer> GetById(Guid id);
+    }
+}
+```
+
+### Implement ICustomerService
+
+CustomerManagement.DataService/Services/CustomerService.cs
+```csharp
+namespace CustomerManagement.DataService.Services
+{
+    public class CustomerService : ICustomerService
+    {
+        private readonly ICustomerDbStorage _customerDbStorage;
+        ...
+        public Task<Customer> CreateCustomer(Customer customer)
+        {
+            return _customerDbStorage.CreateCustomer(customer);
+        }
+        public Task<Customer> GetById(Guid id)
+        {
+            return _customerDbStorage.GetById(id);
+        }
+    }
+}
+```
+
+### Define the interface ICustomerDbStorage (Database Only)
+
+CustomerManagement.Base/Services/ICustomerDbStorage.cs
+
+```csharp
+namespace CustomerManagement.Base.Services
+{
+    public interface ICustomerDbStorage
+    {
+        Task<Customer> CreateCustomer(Customer customer);
+        Task<Customer> GetById(Guid id);
+    }
+}
+```
+
+### Implement the interface in Sql Server Adapter layer
+
+CustomerManagement.Storage.SqlServerAdapter/Services/CustomerSqlServerStorage.cs
+
+```csharp
+namespace CustomerManagement.Storage.SqlServerAdapter.Services
+{
+    public class CustomerSqlServerStorage : ICustomerDbStorage
+    {
+        private readonly CustomerDbContext _context;
+        ...
+        public async Task<Customer> CreateCustomer(Customer customer)
+        {
+            var customerEntity = ConvertToEntity(customer);
+            var savedEntity = await _context.Customers.AddAsync(customerEntity);
+            await _context.SaveChangesAsync();
+
+            var returnedCustomer = ConvertToModel(savedEntity.Entity);
+            return returnedCustomer;
+        }
+
+        public async Task<Customer> GetById(Guid id)
+        {
+            var customerEntity = await _context.Customers.AsNoTracking()
+                .Where(c => c.Id == id)
+                .SingleOrDefaultAsync();
+            return customerEntity != null ? ConvertToModel(customerEntity) : null;
+        }
+        ...
+    }
+}
+```
+
+### Register CustomerSqlServerStorage with dependency injection
+
+CustomerManagement.DataService/Startup/StorageConfiguration.cs
+```csharp
+        private static void RegisterDatabaseServices(IServiceCollection services)
+        {
+            services.AddScoped<ICustomerDbStorage, CustomerSqlServerStorage>();
+        }
+```
+
 ### Create a migration
 
 Execute the command as below under directory *CustomerManagement.Storage.SqlServerAdapter*
