@@ -26,15 +26,7 @@ Create `nlog.config` and `nlog.Development.config` in `config` directory
         <attribute name="format" layout="2" />
         <attribute name="service" layout="CustomerManagement-Service" />
         <attribute name="timestamp" layout="${ticks}" />
-        <attribute name="timestampISO" layout="${longdate}" />
-        <attribute name="logger" layout="${logger}" />
-        <attribute name="threadid" layout="${threadid}" />
-        <attribute name="levelTag" layout="${level:upperCase=true}" />
-        <attribute name="message" layout="${message}" />
-        <attribute name="exceptionType" layout="${exception:format=Type}" />
-        <attribute name="exceptionMessage" layout="${exception:format=Message}" />
-        <attribute name="exceptionStackTrace" layout="${exception:format=StackTrace}" />
-        <attribute name="environment" layout="${environment:ASPNETCORE_ENVIRONMENT}" />
+        ...
       </layout>
     </target>
     <target name="file" xsi:type="File"
@@ -91,7 +83,6 @@ namespace CustomerManagement.Api.Web.Controllers
     public class ValuesController : ControllerBase
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
-
         ...
         public ActionResult<IEnumerable<string>> Get()
         {
@@ -125,10 +116,11 @@ services:
 Add `sqlserver` service in `docker-compose.yml`
 
 ```yml
-  sqlserver:
+  db:
     image: microsoft/mssql-server-linux:2017-latest
+    
     ports:
-      - "5434:1433"
+      - "1433:1433"
     environment:
       - SA_PASSWORD=Pass@word
       - ACCEPT_EULA=Y
@@ -137,7 +129,7 @@ Add `sqlserver` service in `docker-compose.yml`
 Run the SQL Server container
 
 ```
-docker-compose up sqlserver
+docker-compose up db
 ```
 
 [Connect from outside the container](https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-2017&pivots=cs1-powershell#connectexternal)
@@ -146,7 +138,38 @@ docker-compose up sqlserver
 sqlcmd -S <ip_address>,5434 -U SA -P "Pass@word"
 ```
 
-### References
+## Entity Framework Core
+
+### Install EF Core
+
+### Create a migration
+
+Execute the command as below under directory *CustomerManagement.Storage.SqlServerAdapter*
+```console
+dotnet ef migrations add InitialCreate
+```
+
+```console
+PS C:\Users\frank\Documents\Github\customer-management-dotnetcore\CustomerManagement.Storage.SqlServerAdapter> dotnet ef migrations add InitialCreate
+Done. To undo this action, use 'ef migrations remove'
+```
+
+### Update the database
+
+```console
+dotnet ef database update
+```
+
+```console
+PS C:\Users\frank\Documents\Github\customer-management-dotnetcore\CustomerManagement.Storage.SqlServerAdapter> dotnet ef database update
+Applying migration '20190827220606_InitialCreate'.
+Done.
+```
+
+## References
 
 [Quickstart: Run SQL Server container images with Docker](https://docs.microsoft.com/en-us/sql/linux/quickstart-install-connect-docker?view=sql-server-2017&pivots=cs1-powershell)  
-[Configure SQL Server container images on Docker](https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-docker?view=sql-server-2017)
+[Configure SQL Server container images on Docker](https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-docker?view=sql-server-2017)  
+[Quickstart: Compose and ASP.NET Core with SQL Server](https://docs.docker.com/compose/aspnet-mssql-compose/)  
+[Getting Started with EF Core on ASP.NET Core with a New database](https://docs.microsoft.com/en-us/ef/core/get-started/aspnetcore/new-db?tabs=visual-studio)  
+[Migrations](https://docs.microsoft.com/en-us/ef/core/managing-schemas/migrations/)

@@ -3,7 +3,7 @@ using NLog.Web;
 using System;
 using System.IO;
 
-namespace CustomerManagement.Base.Configuration
+namespace CustomerManagement.Base.Config
 {
     public static class LogConfiguration
     {
